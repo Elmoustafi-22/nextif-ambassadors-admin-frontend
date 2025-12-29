@@ -5,7 +5,6 @@ import {
   Bell,
   User as UserIcon,
   LogOut,
-  Menu,
   X,
   ShieldCheck,
   PlusCircle,

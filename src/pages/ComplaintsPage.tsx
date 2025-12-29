@@ -4,12 +4,8 @@ import {
   MessageSquare,
   Clock,
   CheckCircle2,
-  AlertCircle,
   ChevronRight,
-  Filter,
   X,
-  User,
-  ExternalLink,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import axiosInstance from "../api/axiosInstance";

@@ -20,6 +20,7 @@ const TaskSubmissionsPage = () => {
   const [task, setTask] = useState<any>(null);
   const [submissions, setSubmissions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [verifyingId, setVerifyingId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -67,6 +68,22 @@ const TaskSubmissionsPage = () => {
     return (
       <div className="p-8 animate-pulse text-center">
         Loading submissions...
+      </div>
+    );
+  if (error)
+    return (
+      <div className="p-8 text-center">
+        <div className="bg-red-50 border border-red-200 rounded-2xl p-6 max-w-md mx-auto">
+          <AlertCircle className="mx-auto mb-3 text-red-500" size={32} />
+          <p className="text-red-700 font-semibold mb-2">Error</p>
+          <p className="text-red-600 text-sm">{error}</p>
+          <Button
+            onClick={() => window.location.reload()}
+            className="mt-4 bg-red-600 hover:bg-red-700"
+          >
+            Retry
+          </Button>
+        </div>
       </div>
     );
   if (!task)

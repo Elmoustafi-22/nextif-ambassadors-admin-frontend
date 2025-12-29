@@ -1,7 +1,6 @@
 import { useState } from "react";
 import {
   Upload,
-  FileText,
   CheckCircle2,
   XSquare,
   AlertCircle,
