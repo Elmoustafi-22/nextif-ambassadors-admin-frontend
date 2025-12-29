@@ -1,0 +1,391 @@
+import { useState, useEffect } from "react";
+import {
+  Search,
+  UserPlus,
+  Download,
+  ShieldAlert,
+  CheckCircle2,
+  RefreshCcw,
+  X,
+  UserPlus2,
+} from "lucide-react";
+import axiosInstance from "../api/axiosInstance";
+import Button from "../components/Button";
+import Input from "../components/Input";
+import { cn } from "../utils/cn";
+import { motion } from "framer-motion";
+
+const AmbassadorListPage = () => {
+  const [ambassadors, setAmbassadors] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formError, setFormError] = useState("");
+  const [newAmbassador, setNewAmbassador] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    university: "",
+  });
+
+  const fetchAmbassadors = async () => {
+    setLoading(true);
+    try {
+      const response = await axiosInstance.get("/admin/ambassadors", {
+        params: { search, status: statusFilter },
+      });
+      setAmbassadors(response.data.data);
+    } catch (error) {
+      console.error("Error fetching ambassadors:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchAmbassadors();
+  }, [search, statusFilter]);
+
+  const handleStatusUpdate = async (id: string, newStatus: string) => {
+    try {
+      await axiosInstance.patch(`/admin/ambassadors/${id}/status`, {
+        status: newStatus,
+      });
+      fetchAmbassadors();
+    } catch (error) {
+      console.error("Error updating status:", error);
+    }
+  };
+
+  const handleForceReset = async (id: string) => {
+    if (
+      confirm(
+        "Are you sure you want to force a password reset for this ambassador?"
+      )
+    ) {
+      try {
+        await axiosInstance.post(`/admin/ambassadors/${id}/force-reset`);
+        alert("Password reset triggered successfully.");
+        fetchAmbassadors();
+      } catch (error) {
+        console.error("Error resetting password:", error);
+      }
+    }
+  };
+
+  const handleAddNew = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setFormError("");
+
+    try {
+      await axiosInstance.post("/admin/ambassadors", newAmbassador);
+      setIsModalOpen(false);
+      setNewAmbassador({
+        firstName: "",
+        lastName: "",
+        email: "",
+        university: "",
+      });
+      fetchAmbassadors();
+    } catch (error: any) {
+      setFormError(error.response?.data?.message || "Failed to add ambassador");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-neutral-900">
+            Ambassador Management
+          </h1>
+          <p className="text-neutral-500 text-sm">
+            View, onboard, and manage all ambassadors.
+          </p>
+        </div>
+        <div className="flex items-center gap-3">
+          <Button variant="outline" size="sm" className="gap-2">
+            <Download size={16} /> Export
+          </Button>
+          <Button
+            size="sm"
+            className="gap-2"
+            onClick={() => setIsModalOpen(true)}
+          >
+            <UserPlus size={16} /> New Ambassador
+          </Button>
+        </div>
+      </div>
+
+      {/* Filters */}
+      <div className="bg-white p-4 rounded-2xl border border-neutral-100 flex flex-col md:flex-row gap-4">
+        <div className="flex-1">
+          <Input
+            placeholder="Search by name or email..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            icon={<Search size={18} className="text-neutral-400" />}
+            className="h-11"
+          />
+        </div>
+        <div className="flex gap-4">
+          <select
+            className="bg-neutral-50 border border-neutral-100 rounded-xl px-4 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+          >
+            <option value="">All Statuses</option>
+            <option value="ACTIVE">Active</option>
+            <option value="PRELOADED">Preloaded</option>
+            <option value="PASSWORD_PENDING">Password Pending</option>
+            <option value="SUSPENDED">Suspended</option>
+          </select>
+        </div>
+      </div>
+
+      {/* Table */}
+      <div className="bg-white rounded-2xl border border-neutral-100 overflow-hidden shadow-sm">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="bg-neutral-50/50 border-b border-neutral-100">
+                <th className="px-6 py-4 text-xs font-heading font-bold text-neutral-400 uppercase tracking-wider">
+                  Ambassador
+                </th>
+                <th className="px-6 py-4 text-xs font-heading font-bold text-neutral-400 uppercase tracking-wider">
+                  Status
+                </th>
+                <th className="px-6 py-4 text-xs font-heading font-bold text-neutral-400 uppercase tracking-wider">
+                  Joined
+                </th>
+                <th className="px-6 py-4 text-xs font-heading font-bold text-neutral-400 uppercase tracking-wider text-right">
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-neutral-50">
+              {loading ? (
+                Array.from({ length: 5 }).map((_, i) => (
+                  <tr key={i} className="animate-pulse">
+                    <td className="px-6 py-4">
+                      <div className="h-4 bg-neutral-100 rounded w-32"></div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="h-4 bg-neutral-100 rounded w-20"></div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="h-4 bg-neutral-100 rounded w-24"></div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="h-4 bg-neutral-100 rounded w-10 ml-auto"></div>
+                    </td>
+                  </tr>
+                ))
+              ) : ambassadors.length === 0 ? (
+                <tr>
+                  <td
+                    colSpan={4}
+                    className="px-6 py-12 text-center text-neutral-500"
+                  >
+                    No ambassadors found matching your criteria.
+                  </td>
+                </tr>
+              ) : (
+                ambassadors.map((ambassador: any) => (
+                  <tr
+                    key={ambassador._id}
+                    className="hover:bg-neutral-50/50 transition-colors"
+                  >
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-9 h-9 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center font-bold text-xs uppercase">
+                          {ambassador.firstName?.[0]}
+                          {ambassador.lastName?.[0]}
+                        </div>
+                        <div>
+                          <p className="font-heading font-semibold text-neutral-900">
+                            {ambassador.firstName} {ambassador.lastName}
+                          </p>
+                          <p className="text-xs text-neutral-500">
+                            {ambassador.email}
+                          </p>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <span
+                        className={cn(
+                          "px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider",
+                          ambassador.accountStatus === "ACTIVE"
+                            ? "bg-green-100 text-green-700"
+                            : ambassador.accountStatus === "SUSPENDED"
+                            ? "bg-red-100 text-red-700"
+                            : ambassador.accountStatus === "PASSWORD_PENDING"
+                            ? "bg-amber-100 text-amber-700"
+                            : "bg-blue-100 text-blue-700"
+                        )}
+                      >
+                        {ambassador.accountStatus}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 text-sm text-neutral-500">
+                      {new Date(ambassador.createdAt).toLocaleDateString()}
+                    </td>
+                    <td className="px-6 py-4 text-right">
+                      <div className="flex justify-end gap-2">
+                        {ambassador.accountStatus === "ACTIVE" ? (
+                          <button
+                            onClick={() =>
+                              handleStatusUpdate(ambassador._id, "SUSPENDED")
+                            }
+                            className="p-2 text-neutral-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                            title="Suspend Account"
+                          >
+                            <ShieldAlert size={18} />
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() =>
+                              handleStatusUpdate(ambassador._id, "ACTIVE")
+                            }
+                            className="p-2 text-neutral-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors"
+                            title="Activate Account"
+                          >
+                            <CheckCircle2 size={18} />
+                          </button>
+                        )}
+                        <button
+                          onClick={() => handleForceReset(ambassador._id)}
+                          className="p-2 text-neutral-400 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-colors"
+                          title="Force Password Reset"
+                        >
+                          <RefreshCcw size={18} />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* Add Ambassador Modal */}
+      {isModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-white rounded-3xl w-full max-w-md shadow-2xl overflow-hidden"
+          >
+            <div className="p-6 border-b border-neutral-100 flex justify-between items-center bg-neutral-50/50">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white">
+                  <UserPlus2 size={20} />
+                </div>
+                <div>
+                  <h2 className="text-lg font-bold text-neutral-900">
+                    Add Ambassador
+                  </h2>
+                  <p className="text-xs text-neutral-500 font-medium">
+                    Create a new ambassador account
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setIsModalOpen(false)}
+                className="p-2 text-neutral-400 hover:text-neutral-900 hover:bg-neutral-100 rounded-xl transition-all"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <form onSubmit={handleAddNew} className="p-6 space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <Input
+                  label="First Name"
+                  placeholder="John"
+                  required
+                  value={newAmbassador.firstName}
+                  onChange={(e) =>
+                    setNewAmbassador({
+                      ...newAmbassador,
+                      firstName: e.target.value,
+                    })
+                  }
+                />
+                <Input
+                  label="Last Name"
+                  placeholder="Doe"
+                  required
+                  value={newAmbassador.lastName}
+                  onChange={(e) =>
+                    setNewAmbassador({
+                      ...newAmbassador,
+                      lastName: e.target.value,
+                    })
+                  }
+                />
+              </div>
+              <Input
+                label="Email Address"
+                type="email"
+                placeholder="john.doe@example.com"
+                required
+                value={newAmbassador.email}
+                onChange={(e) =>
+                  setNewAmbassador({ ...newAmbassador, email: e.target.value })
+                }
+              />
+              <Input
+                label="University"
+                placeholder="NextIF University"
+                required
+                value={newAmbassador.university}
+                onChange={(e) =>
+                  setNewAmbassador({
+                    ...newAmbassador,
+                    university: e.target.value,
+                  })
+                }
+              />
+
+              {formError && (
+                <div className="p-3 bg-red-50 border border-red-100 text-red-600 text-xs font-bold rounded-xl flex items-center gap-2">
+                  <ShieldAlert size={14} />
+                  {formError}
+                </div>
+              )}
+
+              <div className="flex gap-3 pt-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="flex-1"
+                  onClick={() => setIsModalOpen(false)}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  className="flex-1"
+                  isLoading={isSubmitting}
+                >
+                  Create Account
+                </Button>
+              </div>
+            </form>
+          </motion.div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default AmbassadorListPage;
