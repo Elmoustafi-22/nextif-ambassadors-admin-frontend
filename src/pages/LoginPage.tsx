@@ -70,9 +70,8 @@ const LoginPage = () => {
             <img
               src="/images/nextIf-ico.jpg"
               alt="Logo"
-              className="w-14 h-14 mb-6 shadow-lg object-center shadow-blue-600/20 rounded-2xl"
+              className="w-14 h-14 mb-6 mx-auto shadow-lg object-center shadow-blue-600/20 rounded-2xl"
             />
-
             <h1 className="text-2xl font-bold text-neutral-900">Admin Login</h1>
             <p className="text-neutral-500 mt-1">NextIF Administrator Portal</p>
           </div>
