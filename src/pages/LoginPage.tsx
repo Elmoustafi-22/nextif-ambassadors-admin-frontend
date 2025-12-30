@@ -67,9 +67,12 @@ const LoginPage = () => {
           className="bg-white rounded-4xl shadow-xl shadow-blue-500/5 p-8 border border-neutral-100"
         >
           <div className="mb-8 text-center">
-            <div className="w-16 h-16 bg-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-blue-600/20">
-              <ShieldCheck className="text-white w-8 h-8" />
-            </div>
+            <img
+              src="/images/nextIf-ico.jpg"
+              alt="Logo"
+              className="w-14 h-14 mb-6 shadow-lg object-center shadow-blue-600/20 rounded-2xl"
+            />
+
             <h1 className="text-2xl font-bold text-neutral-900">Admin Login</h1>
             <p className="text-neutral-500 mt-1">NextIF Administrator Portal</p>
           </div>
