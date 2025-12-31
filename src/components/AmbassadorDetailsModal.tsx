@@ -10,6 +10,7 @@ import {
   Calendar,
   User,
   Phone,
+  Mail,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Button from "./Button";
@@ -174,6 +175,17 @@ const AmbassadorDetailsModal = ({
                       </div>
                       <p className="font-semibold text-neutral-900">
                         {ambassador.profile?.phone || "Not specified"}
+                      </p>
+                    </div>
+                    <div className="p-4 bg-neutral-50 rounded-2xl border border-neutral-100/50">
+                      <div className="flex items-center gap-2 text-neutral-400 mb-2">
+                        <Mail size={16} />
+                        <span className="text-xs font-bold uppercase tracking-wider">
+                          Email
+                        </span>
+                      </div>
+                      <p className="font-semibold text-neutral-900 break-all">
+                        {ambassador.email}
                       </p>
                     </div>
                     <div className="p-4 bg-neutral-50 rounded-2xl border border-neutral-100/50">
