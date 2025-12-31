@@ -139,12 +139,12 @@ const AdminDashboard = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 bg-white rounded-3xl border border-neutral-100 shadow-sm overflow-hidden">
-          <div className="p-6 border-b border-neutral-100">
+          <div className="p-4 sm:p-6 border-b border-neutral-100">
             <h2 className="text-lg font-bold text-neutral-900">
               Recent Ambassador Activity
             </h2>
           </div>
-          <div className="p-6">
+          <div className="p-4 sm:p-6">
             <div className="overflow-x-auto">
               {recentActivity.length > 0 ? (
                 <table className="w-full text-left">
@@ -198,10 +198,10 @@ const AdminDashboard = () => {
         </div>
 
         <div className="bg-white rounded-3xl border border-neutral-100 shadow-sm overflow-hidden">
-          <div className="p-6 border-b border-neutral-100">
+          <div className="p-4 sm:p-6 border-b border-neutral-100">
             <h2 className="text-lg font-bold text-neutral-900">System Tasks</h2>
           </div>
-          <div className="p-6 space-y-4">
+          <div className="p-4 sm:p-6 space-y-4">
             <Link to="/ambassadors/bulk">
               <Button
                 variant="outline"

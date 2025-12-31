@@ -141,7 +141,7 @@ const AmbassadorListPage = () => {
       </div>
 
       {/* Filters */}
-      <div className="bg-white p-4 rounded-2xl border border-neutral-100 flex flex-col md:flex-row gap-4">
+      <div className="bg-white p-4 rounded-2xl border border-neutral-100 flex flex-col lg:flex-row gap-4">
         {/* ... filters content ... */}
         <div className="flex-1">
           <Input
@@ -173,16 +173,16 @@ const AmbassadorListPage = () => {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-neutral-50/50 border-b border-neutral-100">
-                <th className="px-6 py-4 text-xs font-heading font-bold text-neutral-400 uppercase tracking-wider">
+                <th className="px-4 py-3 sm:px-6 sm:py-4 text-xs font-heading font-bold text-neutral-400 uppercase tracking-wider">
                   Ambassador
                 </th>
-                <th className="px-6 py-4 text-xs font-heading font-bold text-neutral-400 uppercase tracking-wider">
+                <th className="px-4 py-3 sm:px-6 sm:py-4 text-xs font-heading font-bold text-neutral-400 uppercase tracking-wider">
                   Status
                 </th>
-                <th className="px-6 py-4 text-xs font-heading font-bold text-neutral-400 uppercase tracking-wider">
+                <th className="px-4 py-3 sm:px-6 sm:py-4 text-xs font-heading font-bold text-neutral-400 uppercase tracking-wider">
                   Joined
                 </th>
-                <th className="px-6 py-4 text-xs font-heading font-bold text-neutral-400 uppercase tracking-wider text-right">
+                <th className="px-4 py-3 sm:px-6 sm:py-4 text-xs font-heading font-bold text-neutral-400 uppercase tracking-wider text-right">
                   Details
                 </th>
               </tr>
@@ -221,7 +221,7 @@ const AmbassadorListPage = () => {
                     className="hover:bg-neutral-50/50 transition-colors cursor-pointer"
                     onClick={() => handleRowClick(ambassador)}
                   >
-                    <td className="px-6 py-4">
+                    <td className="px-4 py-3 sm:px-6 sm:py-4">
                       <div className="flex items-center gap-3">
                         <div className="w-9 h-9 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center font-bold text-xs uppercase">
                           {ambassador.firstName?.[0]}
@@ -237,7 +237,7 @@ const AmbassadorListPage = () => {
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-4 py-3 sm:px-6 sm:py-4">
                       <span
                         className={cn(
                           "px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider",
@@ -253,10 +253,10 @@ const AmbassadorListPage = () => {
                         {ambassador.accountStatus}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-sm text-neutral-500">
+                    <td className="px-4 py-3 sm:px-6 sm:py-4 text-sm text-neutral-500">
                       {new Date(ambassador.createdAt).toLocaleDateString()}
                     </td>
-                    <td className="px-6 py-4 text-right">
+                    <td className="px-4 py-3 sm:px-6 sm:py-4 text-right">
                       <button className="text-neutral-400 hover:text-blue-600 transition-colors">
                         <UserPlus size={18} className="rotate-45" />
                       </button>
