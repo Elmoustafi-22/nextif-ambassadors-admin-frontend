@@ -22,6 +22,7 @@ const TaskSubmissionsPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [verifyingId, setVerifyingId] = useState<string | null>(null);
+  const [remarks, setRemarks] = useState<{ [key: string]: string }>({});
 
   useEffect(() => {
     const fetchData = async () => {
@@ -51,11 +52,18 @@ const TaskSubmissionsPage = () => {
       setVerifyingId(submissionId);
       await axiosInstance.patch(`/tasks/submissions/${submissionId}/verify`, {
         status,
+        feedback: remarks[submissionId] || "",
       });
       // Update local state
       setSubmissions((prev) =>
         prev.map((s) => (s._id === submissionId ? { ...s, status } : s))
       );
+      // Clear remark
+      setRemarks((prev) => {
+        const next = { ...prev };
+        delete next[submissionId];
+        return next;
+      });
     } catch (err) {
       console.error("Verification failed:", err);
       alert("Failed to update status");
@@ -293,26 +301,44 @@ const TaskSubmissionsPage = () => {
 
                   {/* Action Buttons */}
                   {sub.status === "SUBMITTED" && (
-                    <div className="flex gap-4 mt-8">
-                      <Button
-                        className="flex-1 bg-green-600 hover:bg-green-700 border-none h-11"
-                        onClick={() => handleVerify(sub._id, "COMPLETED")}
-                        disabled={verifyingId === sub._id}
-                        isLoading={verifyingId === sub._id}
-                        leftIcon={<CheckCircle2 size={18} />}
-                      >
-                        Approve
-                      </Button>
-                      <Button
-                        variant="outline"
-                        className="flex-1 border-red-200 text-red-600 hover:bg-red-50 h-11"
-                        onClick={() => handleVerify(sub._id, "REJECTED")}
-                        disabled={verifyingId === sub._id}
-                        isLoading={verifyingId === sub._id}
-                        leftIcon={<XCircle size={18} />}
-                      >
-                        Reject
-                      </Button>
+                    <div className="mt-8 space-y-4">
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest">
+                          Admin Remarks (Optional)
+                        </label>
+                        <textarea
+                          className="w-full text-sm p-4 rounded-2xl bg-neutral-50 border border-neutral-100 focus:outline-none focus:ring-2 focus:ring-blue-500/20 resize-none h-24"
+                          placeholder="Provide feedback for the ambassador..."
+                          value={remarks[sub._id] || ""}
+                          onChange={(e) =>
+                            setRemarks({
+                              ...remarks,
+                              [sub._id]: e.target.value,
+                            })
+                          }
+                        />
+                      </div>
+                      <div className="flex gap-4">
+                        <Button
+                          className="flex-1 bg-green-600 hover:bg-green-700 border-none h-11"
+                          onClick={() => handleVerify(sub._id, "COMPLETED")}
+                          disabled={verifyingId === sub._id}
+                          isLoading={verifyingId === sub._id}
+                          leftIcon={<CheckCircle2 size={18} />}
+                        >
+                          Approve
+                        </Button>
+                        <Button
+                          variant="outline"
+                          className="flex-1 border-red-200 text-red-600 hover:bg-red-50 h-11"
+                          onClick={() => handleVerify(sub._id, "REJECTED")}
+                          disabled={verifyingId === sub._id}
+                          isLoading={verifyingId === sub._id}
+                          leftIcon={<XCircle size={18} />}
+                        >
+                          Reject
+                        </Button>
+                      </div>
                     </div>
                   )}
                 </div>
