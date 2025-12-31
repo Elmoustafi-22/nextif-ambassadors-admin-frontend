@@ -46,10 +46,9 @@ const AmbassadorDetailsModal = ({
     setIsSending(true);
     try {
       await axiosInstance.post("/admin/messages", {
-        recipientId: ambassador._id,
-        subject: messageSubject,
-        message: messageBody,
-        type: "MESSAGE",
+        ambassadorId: ambassador._id,
+        title: messageSubject,
+        body: messageBody,
       });
       setSendSuccess(true);
       setTimeout(() => {
