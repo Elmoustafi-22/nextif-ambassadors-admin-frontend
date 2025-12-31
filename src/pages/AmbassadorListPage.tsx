@@ -3,11 +3,9 @@ import {
   Search,
   UserPlus,
   Download,
-  ShieldAlert,
-  CheckCircle2,
-  RefreshCcw,
   X,
   UserPlus2,
+  ShieldAlert,
 } from "lucide-react";
 import axiosInstance from "../api/axiosInstance";
 import Button from "../components/Button";
@@ -15,12 +13,16 @@ import Input from "../components/Input";
 import { cn } from "../utils/cn";
 import { motion } from "framer-motion";
 
+import AmbassadorDetailsModal from "../components/AmbassadorDetailsModal";
+
 const AmbassadorListPage = () => {
   const [ambassadors, setAmbassadors] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
+  const [selectedAmbassador, setSelectedAmbassador] = useState<any>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formError, setFormError] = useState("");
   const [newAmbassador, setNewAmbassador] = useState({
@@ -97,9 +99,25 @@ const AmbassadorListPage = () => {
     }
   };
 
+  const handleDelete = async (id: string) => {
+    try {
+      await axiosInstance.delete(`/admin/ambassadors/${id}`);
+      setIsDetailsModalOpen(false);
+      fetchAmbassadors();
+    } catch (error) {
+      console.error("Error deleting ambassador:", error);
+    }
+  };
+
+  const handleRowClick = (ambassador: any) => {
+    setSelectedAmbassador(ambassador);
+    setIsDetailsModalOpen(true);
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        {/* ... header content ... */}
         <div>
           <h1 className="text-2xl font-bold text-neutral-900">
             Ambassador Management
@@ -124,6 +142,7 @@ const AmbassadorListPage = () => {
 
       {/* Filters */}
       <div className="bg-white p-4 rounded-2xl border border-neutral-100 flex flex-col md:flex-row gap-4">
+        {/* ... filters content ... */}
         <div className="flex-1">
           <Input
             placeholder="Search by name or email..."
@@ -164,7 +183,7 @@ const AmbassadorListPage = () => {
                   Joined
                 </th>
                 <th className="px-6 py-4 text-xs font-heading font-bold text-neutral-400 uppercase tracking-wider text-right">
-                  Actions
+                  Details
                 </th>
               </tr>
             </thead>
@@ -199,7 +218,8 @@ const AmbassadorListPage = () => {
                 ambassadors.map((ambassador: any) => (
                   <tr
                     key={ambassador._id}
-                    className="hover:bg-neutral-50/50 transition-colors"
+                    className="hover:bg-neutral-50/50 transition-colors cursor-pointer"
+                    onClick={() => handleRowClick(ambassador)}
                   >
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
@@ -237,36 +257,9 @@ const AmbassadorListPage = () => {
                       {new Date(ambassador.createdAt).toLocaleDateString()}
                     </td>
                     <td className="px-6 py-4 text-right">
-                      <div className="flex justify-end gap-2">
-                        {ambassador.accountStatus === "ACTIVE" ? (
-                          <button
-                            onClick={() =>
-                              handleStatusUpdate(ambassador._id, "SUSPENDED")
-                            }
-                            className="p-2 text-neutral-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                            title="Suspend Account"
-                          >
-                            <ShieldAlert size={18} />
-                          </button>
-                        ) : (
-                          <button
-                            onClick={() =>
-                              handleStatusUpdate(ambassador._id, "ACTIVE")
-                            }
-                            className="p-2 text-neutral-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors"
-                            title="Activate Account"
-                          >
-                            <CheckCircle2 size={18} />
-                          </button>
-                        )}
-                        <button
-                          onClick={() => handleForceReset(ambassador._id)}
-                          className="p-2 text-neutral-400 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-colors"
-                          title="Force Password Reset"
-                        >
-                          <RefreshCcw size={18} />
-                        </button>
-                      </div>
+                      <button className="text-neutral-400 hover:text-blue-600 transition-colors">
+                        <UserPlus size={18} className="rotate-45" />
+                      </button>
                     </td>
                   </tr>
                 ))
@@ -275,6 +268,15 @@ const AmbassadorListPage = () => {
           </table>
         </div>
       </div>
+
+      <AmbassadorDetailsModal
+        ambassador={selectedAmbassador}
+        isOpen={isDetailsModalOpen}
+        onClose={() => setIsDetailsModalOpen(false)}
+        onStatusUpdate={handleStatusUpdate}
+        onForceReset={handleForceReset}
+        onDelete={handleDelete}
+      />
 
       {/* Add Ambassador Modal */}
       {isModalOpen && (
