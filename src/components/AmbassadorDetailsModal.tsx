@@ -11,6 +11,9 @@ import {
   User,
   Phone,
   Mail,
+  Instagram,
+  Twitter,
+  Linkedin,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Button from "./Button";
@@ -209,6 +212,58 @@ const AmbassadorDetailsModal = ({
                       <p className="font-semibold text-neutral-900">
                         {ambassador.role}
                       </p>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h3 className="text-sm font-bold text-neutral-900 uppercase tracking-wider mb-4">
+                      Social Media
+                    </h3>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div className="flex items-center gap-3 p-3 bg-neutral-50 rounded-xl border border-neutral-100/50">
+                        <Instagram size={18} className="text-neutral-400" />
+                        <div>
+                          <p className="text-[10px] font-bold text-neutral-400 uppercase tracking-tighter">
+                            Instagram
+                          </p>
+                          <p className="text-sm font-semibold text-neutral-900">
+                            {ambassador.profile?.instagram || "Not linked"}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-3 p-3 bg-neutral-50 rounded-xl border border-neutral-100/50">
+                        <Twitter size={18} className="text-neutral-400" />
+                        <div>
+                          <p className="text-[10px] font-bold text-neutral-400 uppercase tracking-tighter">
+                            Twitter
+                          </p>
+                          <p className="text-sm font-semibold text-neutral-900">
+                            {ambassador.profile?.twitter || "Not linked"}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-3 p-3 bg-neutral-50 rounded-xl border border-neutral-100/50">
+                        <Linkedin size={18} className="text-neutral-400" />
+                        <div>
+                          <p className="text-[10px] font-bold text-neutral-400 uppercase tracking-tighter">
+                            LinkedIn
+                          </p>
+                          <p className="text-sm font-semibold text-neutral-900">
+                            {ambassador.profile?.linkedin || "Not linked"}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-3 p-3 bg-neutral-50 rounded-xl border border-neutral-100/50">
+                        <User size={18} className="text-neutral-400" />
+                        <div>
+                          <p className="text-[10px] font-bold text-neutral-400 uppercase tracking-tighter">
+                            TikTok
+                          </p>
+                          <p className="text-sm font-semibold text-neutral-900">
+                            {ambassador.profile?.tiktok || "Not linked"}
+                          </p>
+                        </div>
+                      </div>
                     </div>
                   </div>
 

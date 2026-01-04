@@ -30,6 +30,10 @@ const AmbassadorListPage = () => {
     lastName: "",
     email: "",
     university: "",
+    instagram: "",
+    twitter: "",
+    linkedin: "",
+    tiktok: "",
   });
 
   const fetchAmbassadors = async () => {
@@ -90,6 +94,10 @@ const AmbassadorListPage = () => {
         lastName: "",
         email: "",
         university: "",
+        instagram: "",
+        twitter: "",
+        linkedin: "",
+        tiktok: "",
       });
       fetchAmbassadors();
     } catch (error: any) {
@@ -357,6 +365,56 @@ const AmbassadorListPage = () => {
                   })
                 }
               />
+
+              <div className="grid grid-cols-2 gap-4">
+                <Input
+                  label="Instagram"
+                  placeholder="@username"
+                  value={newAmbassador.instagram}
+                  onChange={(e) =>
+                    setNewAmbassador({
+                      ...newAmbassador,
+                      instagram: e.target.value,
+                    })
+                  }
+                />
+                <Input
+                  label="Twitter (X)"
+                  placeholder="@username"
+                  value={newAmbassador.twitter}
+                  onChange={(e) =>
+                    setNewAmbassador({
+                      ...newAmbassador,
+                      twitter: e.target.value,
+                    })
+                  }
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <Input
+                  label="LinkedIn"
+                  placeholder="Profile URL"
+                  value={newAmbassador.linkedin}
+                  onChange={(e) =>
+                    setNewAmbassador({
+                      ...newAmbassador,
+                      linkedin: e.target.value,
+                    })
+                  }
+                />
+                <Input
+                  label="TikTok"
+                  placeholder="@username"
+                  value={newAmbassador.tiktok}
+                  onChange={(e) =>
+                    setNewAmbassador({
+                      ...newAmbassador,
+                      tiktok: e.target.value,
+                    })
+                  }
+                />
+              </div>
 
               {formError && (
                 <div className="p-3 bg-red-50 border border-red-100 text-red-600 text-xs font-bold rounded-xl flex items-center gap-2">
