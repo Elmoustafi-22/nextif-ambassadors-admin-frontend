@@ -14,6 +14,7 @@ import {
   Instagram,
   Twitter,
   Linkedin,
+  Facebook,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Button from "./Button";
@@ -254,13 +255,13 @@ const AmbassadorDetailsModal = ({
                         </div>
                       </div>
                       <div className="flex items-center gap-3 p-3 bg-neutral-50 rounded-xl border border-neutral-100/50">
-                        <User size={18} className="text-neutral-400" />
+                        <Facebook size={18} className="text-neutral-400" />
                         <div>
                           <p className="text-[10px] font-bold text-neutral-400 uppercase tracking-tighter">
-                            TikTok
+                            Facebook
                           </p>
                           <p className="text-sm font-semibold text-neutral-900">
-                            {ambassador.profile?.tiktok || "Not linked"}
+                            {ambassador.profile?.facebook || "Not linked"}
                           </p>
                         </div>
                       </div>

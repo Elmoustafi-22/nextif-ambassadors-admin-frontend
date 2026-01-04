@@ -33,7 +33,7 @@ const AmbassadorListPage = () => {
     instagram: "",
     twitter: "",
     linkedin: "",
-    tiktok: "",
+    facebook: "",
   });
 
   const fetchAmbassadors = async () => {
@@ -97,7 +97,7 @@ const AmbassadorListPage = () => {
         instagram: "",
         twitter: "",
         linkedin: "",
-        tiktok: "",
+        facebook: "",
       });
       fetchAmbassadors();
     } catch (error: any) {
@@ -404,13 +404,13 @@ const AmbassadorListPage = () => {
                   }
                 />
                 <Input
-                  label="TikTok"
-                  placeholder="@username"
-                  value={newAmbassador.tiktok}
+                  label="Facebook"
+                  placeholder="facebook.com/username"
+                  value={newAmbassador.facebook}
                   onChange={(e) =>
                     setNewAmbassador({
                       ...newAmbassador,
-                      tiktok: e.target.value,
+                      facebook: e.target.value,
                     })
                   }
                 />
