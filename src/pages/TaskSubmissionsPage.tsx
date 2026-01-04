@@ -50,13 +50,16 @@ const TaskSubmissionsPage = () => {
   ) => {
     try {
       setVerifyingId(submissionId);
-      await axiosInstance.patch(`/tasks/submissions/${submissionId}/verify`, {
-        status,
-        feedback: remarks[submissionId] || "",
-      });
+      const res = await axiosInstance.patch(
+        `/tasks/submissions/${submissionId}/verify`,
+        {
+          status,
+          feedback: remarks[submissionId] || "",
+        }
+      );
       // Update local state
       setSubmissions((prev) =>
-        prev.map((s) => (s._id === submissionId ? { ...s, status } : s))
+        prev.map((s) => (s._id === submissionId ? res.data : s))
       );
       // Clear remark
       setRemarks((prev) => {
@@ -184,7 +187,7 @@ const TaskSubmissionsPage = () => {
                         </p>
                       </div>
                     </div>
-                    <div>
+                    <div className="flex flex-col items-end gap-1">
                       <span
                         className={cn(
                           "px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider",
@@ -199,6 +202,12 @@ const TaskSubmissionsPage = () => {
                           ? "PENDING REVIEW"
                           : sub.status}
                       </span>
+                      {sub.reviewedBy && (
+                        <span className="text-[9px] text-neutral-400 font-medium italic">
+                          Reviewed by {sub.reviewedBy.firstName}{" "}
+                          {sub.reviewedBy.lastName}
+                        </span>
+                      )}
                     </div>
                   </div>
 
