@@ -12,7 +12,16 @@ The Admin Portal for the NextIF Ambassador Platform. This application allows adm
 - **HTTP Client:** Axios
 - **Icons:** Lucide React
 
-## Prerequisites
+## Core Features
+
+- **Ambassador Management:** Comprehensive tools for single and bulk onboarding (CSV).
+- **Advanced Task Creation:** Create Weekly, Monthly, and **ADHOC** tasks with automated point assignment.
+- **Enhanced Submission Review:**
+  - Real-time review of ambassador submissions.
+  - **Redo Workflow:** Request changes with specific feedback and custom deadlines.
+  - Reviewer tracking to see which admin handled each submission.
+  - Support for reviewing both manual and **AUTO-verified** tasks.
+- **Compliance & Monitoring:** Real-time visibility into ambassador activity and complaints.
 
 - Node.js (v18 or higher recommended)
 - npm

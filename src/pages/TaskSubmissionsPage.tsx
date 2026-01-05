@@ -9,6 +9,8 @@ import {
   Clock,
   ListChecks,
   AlertCircle,
+  RefreshCcw,
+  Calendar as CalendarIcon,
 } from "lucide-react";
 import axiosInstance from "../api/axiosInstance";
 import Button from "../components/Button";
@@ -23,6 +25,9 @@ const TaskSubmissionsPage = () => {
   const [error, setError] = useState<string | null>(null);
   const [verifyingId, setVerifyingId] = useState<string | null>(null);
   const [remarks, setRemarks] = useState<{ [key: string]: string }>({});
+  const [redoDueDates, setRedoDueDates] = useState<{ [key: string]: string }>(
+    {}
+  );
 
   useEffect(() => {
     const fetchData = async () => {
@@ -46,8 +51,12 @@ const TaskSubmissionsPage = () => {
 
   const handleVerify = async (
     submissionId: string,
-    status: "COMPLETED" | "REJECTED"
+    status: "COMPLETED" | "REJECTED" | "REDO"
   ) => {
+    if (status === "REDO" && !redoDueDates[submissionId]) {
+      alert("Please specify a new due date for the redo.");
+      return;
+    }
     try {
       setVerifyingId(submissionId);
       const res = await axiosInstance.patch(
@@ -55,6 +64,7 @@ const TaskSubmissionsPage = () => {
         {
           status,
           feedback: remarks[submissionId] || "",
+          newDueDate: redoDueDates[submissionId],
         }
       );
       // Update local state
@@ -195,11 +205,15 @@ const TaskSubmissionsPage = () => {
                             ? "bg-green-100 text-green-700"
                             : sub.status === "REJECTED"
                             ? "bg-red-100 text-red-700"
+                            : sub.status === "REDO"
+                            ? "bg-amber-100 text-amber-700"
                             : "bg-blue-100 text-blue-700"
                         )}
                       >
                         {sub.status === "SUBMITTED"
                           ? "PENDING REVIEW"
+                          : sub.status === "REDO"
+                          ? "REDO REQUESTED"
                           : sub.status}
                       </span>
                       {sub.reviewedBy && (
@@ -308,8 +322,10 @@ const TaskSubmissionsPage = () => {
                     </div>
                   )}
 
-                  {/* Action Buttons */}
-                  {sub.status === "SUBMITTED" && (
+                  {/* Action Buttons - Show for SUBMITTED, COMPLETED (for redo/remarks), or REDO (to re-evaluate) */}
+                  {(sub.status === "SUBMITTED" ||
+                    sub.status === "COMPLETED" ||
+                    sub.status === "REDO") && (
                     <div className="mt-8 space-y-4">
                       <div className="space-y-2">
                         <label className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest">
@@ -327,7 +343,7 @@ const TaskSubmissionsPage = () => {
                           }
                         />
                       </div>
-                      <div className="flex gap-4">
+                      <div className="flex flex-wrap gap-4">
                         <Button
                           className="flex-1 bg-green-600 hover:bg-green-700 border-none h-11"
                           onClick={() => handleVerify(sub._id, "COMPLETED")}
@@ -339,6 +355,16 @@ const TaskSubmissionsPage = () => {
                         </Button>
                         <Button
                           variant="outline"
+                          className="flex-1 border-amber-200 text-amber-600 hover:bg-amber-50 h-11"
+                          onClick={() => handleVerify(sub._id, "REDO")}
+                          disabled={verifyingId === sub._id}
+                          isLoading={verifyingId === sub._id}
+                          leftIcon={<RefreshCcw size={18} />}
+                        >
+                          Request Redo
+                        </Button>
+                        <Button
+                          variant="outline"
                           className="flex-1 border-red-200 text-red-600 hover:bg-red-50 h-11"
                           onClick={() => handleVerify(sub._id, "REJECTED")}
                           disabled={verifyingId === sub._id}
@@ -347,6 +373,25 @@ const TaskSubmissionsPage = () => {
                         >
                           Reject
                         </Button>
+                      </div>
+
+                      {/* Redo Due Date Picker */}
+                      <div className="pt-2">
+                        <div className="flex items-center gap-2 text-xs font-bold text-neutral-400 uppercase tracking-widest mb-2">
+                          <CalendarIcon size={14} /> New Due Date (Required for
+                          Redo)
+                        </div>
+                        <input
+                          type="datetime-local"
+                          className="w-full text-sm p-3 rounded-xl bg-neutral-50 border border-neutral-100 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                          value={redoDueDates[sub._id] || ""}
+                          onChange={(e) =>
+                            setRedoDueDates({
+                              ...redoDueDates,
+                              [sub._id]: e.target.value,
+                            })
+                          }
+                        />
                       </div>
                     </div>
                   )}

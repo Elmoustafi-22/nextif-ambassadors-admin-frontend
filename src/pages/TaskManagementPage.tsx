@@ -585,21 +585,23 @@ const TaskManagementPage = () => {
                         Frequency
                       </label>
                       <div className="flex bg-neutral-50 p-1 rounded-xl border border-neutral-100">
-                        {(["WEEKLY", "MONTHLY"] as const).map((type) => (
-                          <button
-                            key={type}
-                            type="button"
-                            onClick={() => setFormData({ ...formData, type })}
-                            className={cn(
-                              "flex-1 py-2 text-xs font-bold rounded-lg transition-all",
-                              formData.type === type
-                                ? "bg-white text-blue-600 shadow-sm"
-                                : "text-neutral-400 hover:text-neutral-600"
-                            )}
-                          >
-                            {type}
-                          </button>
-                        ))}
+                        {(["WEEKLY", "MONTHLY", "ADHOC"] as const).map(
+                          (type) => (
+                            <button
+                              key={type}
+                              type="button"
+                              onClick={() => setFormData({ ...formData, type })}
+                              className={cn(
+                                "flex-1 py-2 text-xs font-bold rounded-lg transition-all",
+                                formData.type === type
+                                  ? "bg-white text-blue-600 shadow-sm"
+                                  : "text-neutral-400 hover:text-neutral-600"
+                              )}
+                            >
+                              {type}
+                            </button>
+                          )
+                        )}
                       </div>
                     </div>
 
