@@ -45,7 +45,65 @@ const AmbassadorDetailsModal = ({
   const [isSending, setIsSending] = useState(false);
   const [sendSuccess, setSendSuccess] = useState(false);
 
+  // Edit State
+  const [isEditing, setIsEditing] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [editForm, setEditForm] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    university: "",
+    phone: "",
+    instagram: "",
+    twitter: "",
+    linkedin: "",
+    facebook: "",
+  });
+
   if (!ambassador) return null;
+
+  const handleEditClick = () => {
+    setEditForm({
+      firstName: ambassador.firstName || "",
+      lastName: ambassador.lastName || "",
+      email: ambassador.email || "",
+      university: ambassador.profile?.university || "",
+      phone: ambassador.profile?.phone || "",
+      instagram: ambassador.profile?.instagram || "",
+      twitter: ambassador.profile?.twitter || "",
+      linkedin: ambassador.profile?.linkedin || "",
+      facebook: ambassador.profile?.facebook || "",
+    });
+    setIsEditing(true);
+  };
+
+  const handleSaveEdit = async () => {
+    setIsSaving(true);
+    try {
+      await axiosInstance.patch(`/admin/ambassadors/${ambassador._id}`, {
+        firstName: editForm.firstName,
+        lastName: editForm.lastName,
+        email: editForm.email,
+        university: editForm.university,
+        phone: editForm.phone,
+        instagram: editForm.instagram,
+        twitter: editForm.twitter,
+        linkedin: editForm.linkedin,
+        facebook: editForm.facebook,
+      });
+      setIsEditing(false);
+      // We rely on the parent to refetch or we could just update the local state if passed as prop
+      // But usually in this app pattern, we refetch the list.
+      // Calling onClose to force refresh on parent or we can just hope parent refreshes
+      alert("Ambassador updated successfully!");
+      window.location.reload(); // Simple way to ensure data is fresh
+    } catch (error) {
+      console.error("Error updating ambassador:", error);
+      alert("Failed to update ambassador");
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -98,9 +156,21 @@ const AmbassadorDetailsModal = ({
                   {ambassador.lastName?.[0]}
                 </div>
                 <div>
-                  <h2 className="text-2xl font-bold text-neutral-900">
-                    {ambassador.firstName} {ambassador.lastName}
-                  </h2>
+                  <div className="flex items-center gap-3">
+                    <h2 className="text-2xl font-bold text-neutral-900">
+                      {ambassador.firstName} {ambassador.lastName}
+                    </h2>
+                    {!isEditing && activeTab === "details" && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={handleEditClick}
+                        className="h-8 px-3 text-xs bg-neutral-100 hover:bg-neutral-200"
+                      >
+                        Edit Profile
+                      </Button>
+                    )}
+                  </div>
                   <div className="flex items-center gap-2 mt-1">
                     <span
                       className={cn(
@@ -131,7 +201,10 @@ const AmbassadorDetailsModal = ({
             {/* Tabs */}
             <div className="flex border-b border-neutral-100 px-6 bg-white">
               <button
-                onClick={() => setActiveTab("details")}
+                onClick={() => {
+                  setActiveTab("details");
+                  setIsEditing(false);
+                }}
                 className={cn(
                   "px-4 py-3 text-sm font-bold border-b-2 transition-colors",
                   activeTab === "details"
@@ -142,7 +215,10 @@ const AmbassadorDetailsModal = ({
                 Profile Details
               </button>
               <button
-                onClick={() => setActiveTab("message")}
+                onClick={() => {
+                  setActiveTab("message");
+                  setIsEditing(false);
+                }}
                 className={cn(
                   "px-4 py-3 text-sm font-bold border-b-2 transition-colors",
                   activeTab === "message"
@@ -158,164 +234,281 @@ const AmbassadorDetailsModal = ({
             <div className="p-6 overflow-y-auto flex-1">
               {activeTab === "details" ? (
                 <div className="space-y-8">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="p-4 bg-neutral-50 rounded-2xl border border-neutral-100/50">
-                      <div className="flex items-center gap-2 text-neutral-400 mb-2">
-                        <Building2 size={16} />
-                        <span className="text-xs font-bold uppercase tracking-wider">
-                          University
-                        </span>
+                  {isEditing ? (
+                    <div className="space-y-6">
+                      <div className="grid grid-cols-2 gap-4">
+                        <Input
+                          label="First Name"
+                          value={editForm.firstName}
+                          onChange={(e) =>
+                            setEditForm({
+                              ...editForm,
+                              firstName: e.target.value,
+                            })
+                          }
+                        />
+                        <Input
+                          label="Last Name"
+                          value={editForm.lastName}
+                          onChange={(e) =>
+                            setEditForm({
+                              ...editForm,
+                              lastName: e.target.value,
+                            })
+                          }
+                        />
                       </div>
-                      <p className="font-semibold text-neutral-900">
-                        {ambassador.profile?.university || "Not specified"}
-                      </p>
-                    </div>
-                    <div className="p-4 bg-neutral-50 rounded-2xl border border-neutral-100/50">
-                      <div className="flex items-center gap-2 text-neutral-400 mb-2">
-                        <Phone size={16} />
-                        <span className="text-xs font-bold uppercase tracking-wider">
-                          Phone
-                        </span>
+                      <Input
+                        label="Email Address"
+                        value={editForm.email}
+                        onChange={(e) =>
+                          setEditForm({ ...editForm, email: e.target.value })
+                        }
+                      />
+                      <div className="grid grid-cols-2 gap-4">
+                        <Input
+                          label="University"
+                          value={editForm.university}
+                          onChange={(e) =>
+                            setEditForm({
+                              ...editForm,
+                              university: e.target.value,
+                            })
+                          }
+                        />
+                        <Input
+                          label="Phone Number"
+                          value={editForm.phone}
+                          onChange={(e) =>
+                            setEditForm({ ...editForm, phone: e.target.value })
+                          }
+                        />
                       </div>
-                      <p className="font-semibold text-neutral-900">
-                        {ambassador.profile?.phone || "Not specified"}
-                      </p>
-                    </div>
-                    <div className="p-4 bg-neutral-50 rounded-2xl border border-neutral-100/50">
-                      <div className="flex items-center gap-2 text-neutral-400 mb-2">
-                        <Mail size={16} />
-                        <span className="text-xs font-bold uppercase tracking-wider">
-                          Email
-                        </span>
+                      <div className="grid grid-cols-2 gap-4">
+                        <Input
+                          label="Instagram"
+                          value={editForm.instagram}
+                          onChange={(e) =>
+                            setEditForm({
+                              ...editForm,
+                              instagram: e.target.value,
+                            })
+                          }
+                        />
+                        <Input
+                          label="Twitter"
+                          value={editForm.twitter}
+                          onChange={(e) =>
+                            setEditForm({
+                              ...editForm,
+                              twitter: e.target.value,
+                            })
+                          }
+                        />
                       </div>
-                      <p className="font-semibold text-neutral-900 break-all">
-                        {ambassador.email}
-                      </p>
-                    </div>
-                    <div className="p-4 bg-neutral-50 rounded-2xl border border-neutral-100/50">
-                      <div className="flex items-center gap-2 text-neutral-400 mb-2">
-                        <Calendar size={16} />
-                        <span className="text-xs font-bold uppercase tracking-wider">
-                          Joined Date
-                        </span>
+                      <div className="grid grid-cols-2 gap-4">
+                        <Input
+                          label="LinkedIn"
+                          value={editForm.linkedin}
+                          onChange={(e) =>
+                            setEditForm({
+                              ...editForm,
+                              linkedin: e.target.value,
+                            })
+                          }
+                        />
+                        <Input
+                          label="Facebook"
+                          value={editForm.facebook}
+                          onChange={(e) =>
+                            setEditForm({
+                              ...editForm,
+                              facebook: e.target.value,
+                            })
+                          }
+                        />
                       </div>
-                      <p className="font-semibold text-neutral-900">
-                        {new Date(ambassador.createdAt).toLocaleDateString()}
-                      </p>
-                    </div>
-                    <div className="p-4 bg-neutral-50 rounded-2xl border border-neutral-100/50">
-                      <div className="flex items-center gap-2 text-neutral-400 mb-2">
-                        <User size={16} />
-                        <span className="text-xs font-bold uppercase tracking-wider">
-                          Role
-                        </span>
-                      </div>
-                      <p className="font-semibold text-neutral-900">
-                        {ambassador.role}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div>
-                    <h3 className="text-sm font-bold text-neutral-900 uppercase tracking-wider mb-4">
-                      Social Media
-                    </h3>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div className="flex items-center gap-3 p-3 bg-neutral-50 rounded-xl border border-neutral-100/50">
-                        <Instagram size={18} className="text-neutral-400" />
-                        <div>
-                          <p className="text-[10px] font-bold text-neutral-400 uppercase tracking-tighter">
-                            Instagram
-                          </p>
-                          <p className="text-sm font-semibold text-neutral-900">
-                            {ambassador.profile?.instagram || "Not linked"}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-3 p-3 bg-neutral-50 rounded-xl border border-neutral-100/50">
-                        <Twitter size={18} className="text-neutral-400" />
-                        <div>
-                          <p className="text-[10px] font-bold text-neutral-400 uppercase tracking-tighter">
-                            Twitter
-                          </p>
-                          <p className="text-sm font-semibold text-neutral-900">
-                            {ambassador.profile?.twitter || "Not linked"}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-3 p-3 bg-neutral-50 rounded-xl border border-neutral-100/50">
-                        <Linkedin size={18} className="text-neutral-400" />
-                        <div>
-                          <p className="text-[10px] font-bold text-neutral-400 uppercase tracking-tighter">
-                            LinkedIn
-                          </p>
-                          <p className="text-sm font-semibold text-neutral-900">
-                            {ambassador.profile?.linkedin || "Not linked"}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-3 p-3 bg-neutral-50 rounded-xl border border-neutral-100/50">
-                        <Facebook size={18} className="text-neutral-400" />
-                        <div>
-                          <p className="text-[10px] font-bold text-neutral-400 uppercase tracking-tighter">
-                            Facebook
-                          </p>
-                          <p className="text-sm font-semibold text-neutral-900">
-                            {ambassador.profile?.facebook || "Not linked"}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div>
-                    <h3 className="text-sm font-bold text-neutral-900 uppercase tracking-wider mb-4">
-                      Account Actions
-                    </h3>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      {ambassador.accountStatus === "ACTIVE" ? (
+                      <div className="flex gap-3 pt-4">
                         <Button
                           variant="outline"
-                          className="bg-white hover:bg-red-50 hover:text-red-600 hover:border-red-200 justify-start"
-                          onClick={() =>
-                            onStatusUpdate(ambassador._id, "SUSPENDED")
-                          }
+                          className="flex-1"
+                          onClick={() => setIsEditing(false)}
                         >
-                          <ShieldAlert size={16} className="mr-2" /> Suspend
-                          Account
+                          Cancel
                         </Button>
-                      ) : (
                         <Button
-                          variant="outline"
-                          className="bg-white hover:bg-green-50 hover:text-green-600 hover:border-green-200 justify-start"
-                          onClick={() =>
-                            onStatusUpdate(ambassador._id, "ACTIVE")
-                          }
+                          className="flex-1"
+                          isLoading={isSaving}
+                          onClick={handleSaveEdit}
                         >
-                          <CheckCircle2 size={16} className="mr-2" /> Activate
-                          Account
+                          Save Changes
                         </Button>
-                      )}
-
-                      <Button
-                        variant="outline"
-                        className="bg-white hover:bg-amber-50 hover:text-amber-600 hover:border-amber-200 justify-start"
-                        onClick={() => onForceReset(ambassador._id)}
-                      >
-                        <RefreshCcw size={16} className="mr-2" /> Force Password
-                        Reset
-                      </Button>
-
-                      <Button
-                        variant="outline"
-                        className="bg-white text-red-600 border-red-100 hover:bg-red-50 hover:border-red-200 justify-start col-span-1 sm:col-span-2 mt-2"
-                        onClick={handleDeleteClick}
-                      >
-                        <Trash2 size={16} className="mr-2" /> Delete Ambassador
-                        Permanently
-                      </Button>
+                      </div>
                     </div>
-                  </div>
+                  ) : (
+                    <>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="p-4 bg-neutral-50 rounded-2xl border border-neutral-100/50">
+                          <div className="flex items-center gap-2 text-neutral-400 mb-2">
+                            <Building2 size={16} />
+                            <span className="text-xs font-bold uppercase tracking-wider">
+                              University
+                            </span>
+                          </div>
+                          <p className="font-semibold text-neutral-900">
+                            {ambassador.profile?.university || "Not specified"}
+                          </p>
+                        </div>
+                        <div className="p-4 bg-neutral-50 rounded-2xl border border-neutral-100/50">
+                          <div className="flex items-center gap-2 text-neutral-400 mb-2">
+                            <Phone size={16} />
+                            <span className="text-xs font-bold uppercase tracking-wider">
+                              Phone
+                            </span>
+                          </div>
+                          <p className="font-semibold text-neutral-900">
+                            {ambassador.profile?.phone || "Not specified"}
+                          </p>
+                        </div>
+                        <div className="p-4 bg-neutral-50 rounded-2xl border border-neutral-100/50">
+                          <div className="flex items-center gap-2 text-neutral-400 mb-2">
+                            <Mail size={16} />
+                            <span className="text-xs font-bold uppercase tracking-wider">
+                              Email
+                            </span>
+                          </div>
+                          <p className="font-semibold text-neutral-900 break-all">
+                            {ambassador.email}
+                          </p>
+                        </div>
+                        <div className="p-4 bg-neutral-50 rounded-2xl border border-neutral-100/50">
+                          <div className="flex items-center gap-2 text-neutral-400 mb-2">
+                            <Calendar size={16} />
+                            <span className="text-xs font-bold uppercase tracking-wider">
+                              Joined Date
+                            </span>
+                          </div>
+                          <p className="font-semibold text-neutral-900">
+                            {new Date(
+                              ambassador.createdAt
+                            ).toLocaleDateString()}
+                          </p>
+                        </div>
+                        <div className="p-4 bg-neutral-50 rounded-2xl border border-neutral-100/50">
+                          <div className="flex items-center gap-2 text-neutral-400 mb-2">
+                            <User size={16} />
+                            <span className="text-xs font-bold uppercase tracking-wider">
+                              Role
+                            </span>
+                          </div>
+                          <p className="font-semibold text-neutral-900">
+                            {ambassador.role}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div>
+                        <h3 className="text-sm font-bold text-neutral-900 uppercase tracking-wider mb-4">
+                          Social Media
+                        </h3>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <div className="flex items-center gap-3 p-3 bg-neutral-50 rounded-xl border border-neutral-100/50">
+                            <Instagram size={18} className="text-neutral-400" />
+                            <div>
+                              <p className="text-[10px] font-bold text-neutral-400 uppercase tracking-tighter">
+                                Instagram
+                              </p>
+                              <p className="text-sm font-semibold text-neutral-900">
+                                {ambassador.profile?.instagram || "Not linked"}
+                              </p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-3 p-3 bg-neutral-50 rounded-xl border border-neutral-100/50">
+                            <Twitter size={18} className="text-neutral-400" />
+                            <div>
+                              <p className="text-[10px] font-bold text-neutral-400 uppercase tracking-tighter">
+                                Twitter
+                              </p>
+                              <p className="text-sm font-semibold text-neutral-900">
+                                {ambassador.profile?.twitter || "Not linked"}
+                              </p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-3 p-3 bg-neutral-50 rounded-xl border border-neutral-100/50">
+                            <Linkedin size={18} className="text-neutral-400" />
+                            <div>
+                              <p className="text-[10px] font-bold text-neutral-400 uppercase tracking-tighter">
+                                LinkedIn
+                              </p>
+                              <p className="text-sm font-semibold text-neutral-900">
+                                {ambassador.profile?.linkedin || "Not linked"}
+                              </p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-3 p-3 bg-neutral-50 rounded-xl border border-neutral-100/50">
+                            <Facebook size={18} className="text-neutral-400" />
+                            <div>
+                              <p className="text-[10px] font-bold text-neutral-400 uppercase tracking-tighter">
+                                Facebook
+                              </p>
+                              <p className="text-sm font-semibold text-neutral-900">
+                                {ambassador.profile?.facebook || "Not linked"}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div>
+                        <h3 className="text-sm font-bold text-neutral-900 uppercase tracking-wider mb-4">
+                          Account Actions
+                        </h3>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          {ambassador.accountStatus === "ACTIVE" ? (
+                            <Button
+                              variant="outline"
+                              className="bg-white hover:bg-red-50 hover:text-red-600 hover:border-red-200 justify-start"
+                              onClick={() =>
+                                onStatusUpdate(ambassador._id, "SUSPENDED")
+                              }
+                            >
+                              <ShieldAlert size={16} className="mr-2" /> Suspend
+                              Account
+                            </Button>
+                          ) : (
+                            <Button
+                              variant="outline"
+                              className="bg-white hover:bg-green-50 hover:text-green-600 hover:border-green-200 justify-start"
+                              onClick={() =>
+                                onStatusUpdate(ambassador._id, "ACTIVE")
+                              }
+                            >
+                              <CheckCircle2 size={16} className="mr-2" />{" "}
+                              Activate Account
+                            </Button>
+                          )}
+
+                          <Button
+                            variant="outline"
+                            className="bg-white hover:bg-amber-50 hover:text-amber-600 hover:border-amber-200 justify-start"
+                            onClick={() => onForceReset(ambassador._id)}
+                          >
+                            <RefreshCcw size={16} className="mr-2" /> Force
+                            Password Reset
+                          </Button>
+
+                          <Button
+                            variant="outline"
+                            className="bg-white text-red-600 border-red-100 hover:bg-red-50 hover:border-red-200 justify-start col-span-1 sm:col-span-2 mt-2"
+                            onClick={handleDeleteClick}
+                          >
+                            <Trash2 size={16} className="mr-2" /> Delete
+                            Ambassador Permanently
+                          </Button>
+                        </div>
+                      </div>
+                    </>
+                  )}
                 </div>
               ) : (
                 <form onSubmit={handleSendMessage} className="space-y-4">
