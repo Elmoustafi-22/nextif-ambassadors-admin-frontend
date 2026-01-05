@@ -15,6 +15,7 @@ import {
 import axiosInstance from "../api/axiosInstance";
 import Button from "../components/Button";
 import { cn } from "../utils/cn";
+import { toast } from "../store/useToastStore";
 
 const TaskSubmissionsPage = () => {
   const { id } = useParams();
@@ -54,7 +55,7 @@ const TaskSubmissionsPage = () => {
     status: "COMPLETED" | "REJECTED" | "REDO"
   ) => {
     if (status === "REDO" && !redoDueDates[submissionId]) {
-      alert("Please specify a new due date for the redo.");
+      toast.warning("Please specify a new due date for the redo.");
       return;
     }
     try {
@@ -79,7 +80,7 @@ const TaskSubmissionsPage = () => {
       });
     } catch (err) {
       console.error("Verification failed:", err);
-      alert("Failed to update status");
+      toast.error("Failed to update status");
     } finally {
       setVerifyingId(null);
     }

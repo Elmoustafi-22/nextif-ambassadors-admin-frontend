@@ -22,6 +22,7 @@ import axiosInstance from "../api/axiosInstance";
 import Button from "../components/Button";
 import Input from "../components/Input";
 import { cn } from "../utils/cn";
+import { toast } from "../store/useToastStore";
 
 const TaskManagementPage = () => {
   const navigate = useNavigate();
@@ -163,7 +164,7 @@ const TaskManagementPage = () => {
       setDeleteModal({ isOpen: false, taskId: null });
       fetchTasks();
     } catch (err: any) {
-      alert(err.response?.data?.message || "Failed to delete task");
+      toast.error(err.response?.data?.message || "Failed to delete task");
     } finally {
       setIsSubmitting(false);
     }

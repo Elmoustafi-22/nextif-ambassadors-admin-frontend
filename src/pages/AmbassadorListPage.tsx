@@ -12,6 +12,7 @@ import Button from "../components/Button";
 import Input from "../components/Input";
 import { cn } from "../utils/cn";
 import { motion } from "framer-motion";
+import { toast } from "../store/useToastStore";
 
 import AmbassadorDetailsModal from "../components/AmbassadorDetailsModal";
 
@@ -73,7 +74,7 @@ const AmbassadorListPage = () => {
     ) {
       try {
         await axiosInstance.post(`/admin/ambassadors/${id}/force-reset`);
-        alert("Password reset triggered successfully.");
+        toast.success("Password reset triggered successfully.");
         fetchAmbassadors();
       } catch (error) {
         console.error("Error resetting password:", error);

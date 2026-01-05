@@ -21,6 +21,7 @@ import Button from "./Button";
 import Input from "./Input";
 import { cn } from "../utils/cn";
 import axiosInstance from "../api/axiosInstance";
+import { toast } from "../store/useToastStore";
 
 interface AmbassadorDetailsModalProps {
   ambassador: any;
@@ -95,11 +96,12 @@ const AmbassadorDetailsModal = ({
       // We rely on the parent to refetch or we could just update the local state if passed as prop
       // But usually in this app pattern, we refetch the list.
       // Calling onClose to force refresh on parent or we can just hope parent refreshes
-      alert("Ambassador updated successfully!");
-      window.location.reload(); // Simple way to ensure data is fresh
+      toast.success("Ambassador updated successfully!");
+      // window.location.reload(); // Removing reload to let toast be seen before refresh if any
+      setTimeout(() => window.location.reload(), 1500);
     } catch (error) {
       console.error("Error updating ambassador:", error);
-      alert("Failed to update ambassador");
+      toast.error("Failed to update ambassador");
     } finally {
       setIsSaving(false);
     }
