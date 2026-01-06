@@ -30,7 +30,8 @@ const AmbassadorListPage = () => {
     firstName: "",
     lastName: "",
     email: "",
-    university: "",
+    institution: "",
+    courseOfStudy: "",
     instagram: "",
     twitter: "",
     linkedin: "",
@@ -94,7 +95,8 @@ const AmbassadorListPage = () => {
         firstName: "",
         lastName: "",
         email: "",
-        university: "",
+        institution: "",
+        courseOfStudy: "",
         instagram: "",
         twitter: "",
         linkedin: "",
@@ -354,18 +356,32 @@ const AmbassadorListPage = () => {
                   setNewAmbassador({ ...newAmbassador, email: e.target.value })
                 }
               />
-              <Input
-                label="University"
-                placeholder="NextIF University"
-                required
-                value={newAmbassador.university}
-                onChange={(e) =>
-                  setNewAmbassador({
-                    ...newAmbassador,
-                    university: e.target.value,
-                  })
-                }
-              />
+              <div className="grid grid-cols-2 gap-4">
+                <Input
+                  label="Institution"
+                  placeholder="NextIF Institution"
+                  required
+                  value={newAmbassador.institution}
+                  onChange={(e) =>
+                    setNewAmbassador({
+                      ...newAmbassador,
+                      institution: e.target.value,
+                    })
+                  }
+                />
+                <Input
+                  label="Course of Study"
+                  placeholder="Computer Science"
+                  required
+                  value={newAmbassador.courseOfStudy}
+                  onChange={(e) =>
+                    setNewAmbassador({
+                      ...newAmbassador,
+                      courseOfStudy: e.target.value,
+                    })
+                  }
+                />
+              </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <Input

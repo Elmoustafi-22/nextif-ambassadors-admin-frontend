@@ -53,7 +53,8 @@ const AmbassadorDetailsModal = ({
     firstName: "",
     lastName: "",
     email: "",
-    university: "",
+    institution: "",
+    courseOfStudy: "",
     phone: "",
     instagram: "",
     twitter: "",
@@ -68,7 +69,8 @@ const AmbassadorDetailsModal = ({
       firstName: ambassador.firstName || "",
       lastName: ambassador.lastName || "",
       email: ambassador.email || "",
-      university: ambassador.profile?.university || "",
+      institution: ambassador.profile?.institution || "",
+      courseOfStudy: ambassador.profile?.courseOfStudy || "",
       phone: ambassador.profile?.phone || "",
       instagram: ambassador.profile?.instagram || "",
       twitter: ambassador.profile?.twitter || "",
@@ -85,7 +87,8 @@ const AmbassadorDetailsModal = ({
         firstName: editForm.firstName,
         lastName: editForm.lastName,
         email: editForm.email,
-        university: editForm.university,
+        institution: editForm.institution,
+        courseOfStudy: editForm.courseOfStudy,
         phone: editForm.phone,
         instagram: editForm.instagram,
         twitter: editForm.twitter,
@@ -269,12 +272,22 @@ const AmbassadorDetailsModal = ({
                       />
                       <div className="grid grid-cols-2 gap-4">
                         <Input
-                          label="University"
-                          value={editForm.university}
+                          label="Institution"
+                          value={editForm.institution}
                           onChange={(e) =>
                             setEditForm({
                               ...editForm,
-                              university: e.target.value,
+                              institution: e.target.value,
+                            })
+                          }
+                        />
+                        <Input
+                          label="Course of Study"
+                          value={editForm.courseOfStudy}
+                          onChange={(e) =>
+                            setEditForm({
+                              ...editForm,
+                              courseOfStudy: e.target.value,
                             })
                           }
                         />
@@ -354,11 +367,23 @@ const AmbassadorDetailsModal = ({
                           <div className="flex items-center gap-2 text-neutral-400 mb-2">
                             <Building2 size={16} />
                             <span className="text-xs font-bold uppercase tracking-wider">
-                              University
+                              Institution
                             </span>
                           </div>
                           <p className="font-semibold text-neutral-900">
-                            {ambassador.profile?.university || "Not specified"}
+                            {ambassador.profile?.institution || "Not specified"}
+                          </p>
+                        </div>
+                        <div className="p-4 bg-neutral-50 rounded-2xl border border-neutral-100/50">
+                          <div className="flex items-center gap-2 text-neutral-400 mb-2">
+                            <User size={16} />
+                            <span className="text-xs font-bold uppercase tracking-wider">
+                              Course of Study
+                            </span>
+                          </div>
+                          <p className="font-semibold text-neutral-900">
+                            {ambassador.profile?.courseOfStudy ||
+                              "Not specified"}
                           </p>
                         </div>
                         <div className="p-4 bg-neutral-50 rounded-2xl border border-neutral-100/50">
