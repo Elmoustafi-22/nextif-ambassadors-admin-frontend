@@ -360,7 +360,6 @@ const AmbassadorListPage = () => {
                 <Input
                   label="Institution"
                   placeholder="NextIF Institution"
-                  required
                   value={newAmbassador.institution}
                   onChange={(e) =>
                     setNewAmbassador({
@@ -372,7 +371,6 @@ const AmbassadorListPage = () => {
                 <Input
                   label="Course of Study"
                   placeholder="Computer Science"
-                  required
                   value={newAmbassador.courseOfStudy}
                   onChange={(e) =>
                     setNewAmbassador({
