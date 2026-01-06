@@ -438,6 +438,12 @@ const TaskManagementPage = () => {
                       <Users size={14} />
                       {task.assignedTo?.length || 0} Assigned
                     </div>
+                    {task.createdBy && (
+                      <div className="flex items-center gap-1.5 text-neutral-400">
+                        <Users size={14} />
+                        BY {task.createdBy.firstName} {task.createdBy.lastName}
+                      </div>
+                    )}
                   </div>
                 </div>
 
