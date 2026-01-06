@@ -102,9 +102,11 @@ const AmbassadorDetailsModal = ({
       toast.success("Ambassador updated successfully!");
       // window.location.reload(); // Removing reload to let toast be seen before refresh if any
       setTimeout(() => window.location.reload(), 1500);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error updating ambassador:", error);
-      toast.error("Failed to update ambassador");
+      const errorMessage =
+        error.response?.data?.message || "Failed to update ambassador";
+      toast.error(errorMessage);
     } finally {
       setIsSaving(false);
     }
