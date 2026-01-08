@@ -14,6 +14,7 @@ import TaskSubmissionsPage from "../pages/TaskSubmissionsPage";
 import EventListPage from "../pages/events/EventListPage";
 import CreateEventPage from "../pages/events/CreateEventPage";
 import EventAttendancePage from "../pages/events/EventAttendancePage";
+import AdminDirectoryPage from "../pages/admins/AdminDirectoryPage";
 import Layout from "../components/Layout";
 
 // Placeholder components
@@ -45,6 +46,7 @@ const AppRoutes = () => {
             element={<TaskSubmissionsPage />}
           />
           <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/team" element={<AdminDirectoryPage />} />
           <Route path="/complaints" element={<ComplaintsPage />} />
           <Route path="/announcements" element={<AnnouncementsPage />} />
 
