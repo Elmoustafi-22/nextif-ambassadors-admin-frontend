@@ -10,6 +10,7 @@ import {
   PlusCircle,
   Upload,
   Menu,
+  Calendar,
 } from "lucide-react";
 import { cn } from "../utils/cn";
 import { useAuthStore } from "../store/useAuthStore";
@@ -49,6 +50,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     { name: "Bulk Onboarding", href: "/ambassadors/bulk", icon: Upload },
     { name: "Manage Tasks", href: "/tasks", icon: CheckSquare },
     { name: "Complaints", href: "/complaints", icon: PlusCircle },
+    { name: "Events", href: "/events", icon: Calendar },
     { name: "Announcements", href: "/announcements", icon: Bell },
   ];
 

@@ -21,6 +21,10 @@ The Admin Portal for the NextIF Ambassador Platform. This application allows adm
   - **Redo Workflow:** Request changes with specific feedback and custom deadlines.
   - Reviewer tracking to see which admin handled each submission.
   - Support for reviewing both manual and **AUTO-verified** tasks.
+- **Event Management:**
+  - Create and edit upcoming webinars, meetings, and workshops.
+  - Track attendance with visual indicators (Present, Absent, Excused).
+  - Bulk attendance marking for efficient operations.
 - **Compliance & Monitoring:** Real-time visibility into ambassador activity and complaints.
 
 - Node.js (v18 or higher recommended)
