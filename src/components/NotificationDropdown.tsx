@@ -1,6 +1,6 @@
 import { useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Bell, Info, Megaphone } from "lucide-react";
+import { Bell, Info, Megaphone, Mail } from "lucide-react";
 import { useNotificationStore } from "../store/useNotificationStore";
 import { cn } from "../utils/cn";
 
@@ -100,6 +100,8 @@ const NotificationDropdown = () => {
                     >
                       {notification.type === "ANNOUNCEMENT" ? (
                         <Megaphone size={14} />
+                      ) : notification.type === "MESSAGE" ? (
+                        <Mail size={14} />
                       ) : (
                         <Info size={14} />
                       )}
