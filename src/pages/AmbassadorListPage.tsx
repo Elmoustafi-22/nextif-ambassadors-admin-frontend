@@ -6,6 +6,8 @@ import {
   X,
   UserPlus2,
   ShieldAlert,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import axiosInstance from "../api/axiosInstance";
 import Button from "../components/Button";
@@ -21,6 +23,8 @@ const AmbassadorListPage = () => {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
+  const [page, setPage] = useState(1);
+  const [meta, setMeta] = useState<any>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const [selectedAmbassador, setSelectedAmbassador] = useState<any>(null);
@@ -42,9 +46,10 @@ const AmbassadorListPage = () => {
     setLoading(true);
     try {
       const response = await axiosInstance.get("/admin/ambassadors", {
-        params: { search, status: statusFilter },
+        params: { search, status: statusFilter, page },
       });
       setAmbassadors(response.data.data);
+      setMeta(response.data.meta);
     } catch (error) {
       console.error("Error fetching ambassadors:", error);
     } finally {
@@ -54,6 +59,10 @@ const AmbassadorListPage = () => {
 
   useEffect(() => {
     fetchAmbassadors();
+  }, [search, statusFilter, page]);
+
+  useEffect(() => {
+    setPage(1);
   }, [search, statusFilter]);
 
   const handleStatusUpdate = async (id: string, newStatus: string) => {
@@ -278,6 +287,54 @@ const AmbassadorListPage = () => {
             </tbody>
           </table>
         </div>
+
+        {/* Pagination */}
+        {meta && meta.totalPages > 1 && (
+          <div className="px-6 py-4 bg-neutral-50/50 border-t border-neutral-100 flex items-center justify-between">
+            <p className="text-xs text-neutral-500 font-medium">
+              Showing <span className="text-neutral-900">{meta.total}</span>{" "}
+              ambassadors
+            </p>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-8 w-8 p-0"
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                disabled={page === 1}
+              >
+                <ChevronLeft size={16} />
+              </Button>
+              <div className="flex items-center gap-1">
+                {Array.from({ length: meta.totalPages }, (_, i) => i + 1).map(
+                  (p) => (
+                    <button
+                      key={p}
+                      onClick={() => setPage(p)}
+                      className={cn(
+                        "w-8 h-8 rounded-lg text-xs font-bold transition-all",
+                        page === p
+                          ? "bg-blue-600 text-white shadow-lg shadow-blue-500/20"
+                          : "text-neutral-500 hover:bg-neutral-100"
+                      )}
+                    >
+                      {p}
+                    </button>
+                  )
+                )}
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-8 w-8 p-0"
+                onClick={() => setPage((p) => Math.min(meta.totalPages, p + 1))}
+                disabled={page === meta.totalPages}
+              >
+                <ChevronRight size={16} />
+              </Button>
+            </div>
+          </div>
+        )}
       </div>
 
       <AmbassadorDetailsModal
