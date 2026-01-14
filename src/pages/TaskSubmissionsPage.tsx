@@ -285,17 +285,19 @@ const TaskSubmissionsPage = () => {
                               <label className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest">
                                 Links
                               </label>
-                              {sub.links.map((link: string, lIdx: number) => (
-                                <a
-                                  key={lIdx}
-                                  href={link}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="flex items-center gap-2 text-xs text-blue-600 hover:underline"
-                                >
-                                  <ExternalLink size={12} /> {link}
-                                </a>
-                              ))}
+                              {sub.links
+                                .filter(Boolean)
+                                .map((link: string, lIdx: number) => (
+                                  <a
+                                    key={lIdx}
+                                    href={link}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex items-center gap-2 text-xs text-blue-600 hover:underline"
+                                  >
+                                    <ExternalLink size={12} /> {link}
+                                  </a>
+                                ))}
                             </div>
                           )}
                         {sub.proofFiles && sub.proofFiles.length > 0 && (
@@ -303,8 +305,9 @@ const TaskSubmissionsPage = () => {
                             <label className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest">
                               Attachments
                             </label>
-                            {sub.proofFiles.map(
-                              (file: string, fIdx: number) => (
+                            {sub.proofFiles
+                              .filter(Boolean)
+                              .map((file: string, fIdx: number) => (
                                 <a
                                   key={fIdx}
                                   href={file}
@@ -313,10 +316,9 @@ const TaskSubmissionsPage = () => {
                                   className="flex items-center gap-2 text-xs text-neutral-600 hover:text-blue-600"
                                 >
                                   <Paperclip size={12} />{" "}
-                                  {file.split("/").pop()}
+                                  {file?.split("/").pop() || "Attachment"}
                                 </a>
-                              )
-                            )}
+                              ))}
                           </div>
                         )}
                       </div>
