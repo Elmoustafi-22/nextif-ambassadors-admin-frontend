@@ -71,22 +71,10 @@ const TaskSubmissionsPage = () => {
         }
       );
 
-      // Update local state and reorder
-      setSubmissions((prev) => {
-        const updated = prev.map((s) =>
-          s._id === submissionId ? res.data : s
-        );
-
-        // Reorder: move completed tasks to the bottom
-        const pending = updated.filter(
-          (s) => s.status === "SUBMITTED" || s.status === "REDO"
-        );
-        const completed = updated.filter(
-          (s) => s.status === "COMPLETED" || s.status === "REJECTED"
-        );
-
-        return [...pending, ...completed];
-      });
+      // Update local state
+      setSubmissions((prev) =>
+        prev.map((s) => (s._id === submissionId ? res.data : s))
+      );
 
       // Clear remark
       setRemarks((prev) => {
