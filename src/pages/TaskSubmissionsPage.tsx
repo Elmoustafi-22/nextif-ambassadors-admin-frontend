@@ -12,6 +12,7 @@ import {
   RefreshCcw,
   Calendar as CalendarIcon,
 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import axiosInstance from "../api/axiosInstance";
 import Button from "../components/Button";
 import { cn } from "../utils/cn";
@@ -29,6 +30,7 @@ const TaskSubmissionsPage = () => {
   const [redoDueDates, setRedoDueDates] = useState<{ [key: string]: string }>(
     {}
   );
+  const [showAcceptModal, setShowAcceptModal] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -68,16 +70,36 @@ const TaskSubmissionsPage = () => {
           newDueDate: redoDueDates[submissionId],
         }
       );
-      // Update local state
-      setSubmissions((prev) =>
-        prev.map((s) => (s._id === submissionId ? res.data : s))
-      );
+
+      // Update local state and reorder
+      setSubmissions((prev) => {
+        const updated = prev.map((s) =>
+          s._id === submissionId ? res.data : s
+        );
+
+        // Reorder: move completed tasks to the bottom
+        const pending = updated.filter(
+          (s) => s.status === "SUBMITTED" || s.status === "REDO"
+        );
+        const completed = updated.filter(
+          (s) => s.status === "COMPLETED" || s.status === "REJECTED"
+        );
+
+        return [...pending, ...completed];
+      });
+
       // Clear remark
       setRemarks((prev) => {
         const next = { ...prev };
         delete next[submissionId];
         return next;
       });
+
+      // Show modal if status is COMPLETED
+      if (status === "COMPLETED") {
+        setShowAcceptModal(true);
+        setTimeout(() => setShowAcceptModal(false), 2000);
+      }
     } catch (err) {
       console.error("Verification failed:", err);
       toast.error("Failed to update status");
@@ -404,6 +426,37 @@ const TaskSubmissionsPage = () => {
           )}
         </div>
       </div>
+
+      {/* Acceptance Modal */}
+      <AnimatePresence>
+        {showAcceptModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.8 }}
+              className="bg-white rounded-3xl p-8 shadow-2xl max-w-md w-full text-center"
+            >
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+              >
+                <CheckCircle2
+                  size={64}
+                  className="mx-auto mb-4 text-green-500"
+                />
+              </motion.div>
+              <h2 className="text-3xl font-bold text-neutral-900 mb-2">
+                Accepted!
+              </h2>
+              <p className="text-neutral-600">
+                The task submission has been approved successfully.
+              </p>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
