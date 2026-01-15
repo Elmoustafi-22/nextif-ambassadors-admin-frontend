@@ -71,7 +71,7 @@ const TaskSubmissionsPage = () => {
         }
       );
 
-      // Update local state
+      // Update local state immediately (in place) to show "Approved"
       setSubmissions((prev) =>
         prev.map((s) => (s._id === submissionId ? res.data : s))
       );
@@ -88,6 +88,21 @@ const TaskSubmissionsPage = () => {
         setShowAcceptModal(true);
         setTimeout(() => setShowAcceptModal(false), 2000);
       }
+
+      // Reorder after a delay so user sees the updated state first
+      setTimeout(() => {
+        setSubmissions((prev) => {
+          // We need to re-sort based on the *current* state of prev
+          // which should already have the updated item from the first setSubmissions
+          const pending = prev.filter(
+            (s) => s.status === "SUBMITTED" || s.status === "REDO"
+          );
+          const completed = prev.filter(
+            (s) => s.status === "COMPLETED" || s.status === "REJECTED"
+          );
+          return [...pending, ...completed];
+        });
+      }, 2000); // 2 seconds delay
     } catch (err) {
       console.error("Verification failed:", err);
       toast.error("Failed to update status");
