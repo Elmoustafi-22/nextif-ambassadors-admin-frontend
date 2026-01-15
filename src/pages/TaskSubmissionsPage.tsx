@@ -372,11 +372,14 @@ const TaskSubmissionsPage = () => {
                         <Button
                           className="flex-1 bg-green-600 hover:bg-green-700 border-none h-11"
                           onClick={() => handleVerify(sub._id, "COMPLETED")}
-                          disabled={verifyingId === sub._id}
+                          disabled={
+                            verifyingId === sub._id ||
+                            sub.status === "COMPLETED"
+                          }
                           isLoading={verifyingId === sub._id}
                           leftIcon={<CheckCircle2 size={18} />}
                         >
-                          Approve
+                          {sub.status === "COMPLETED" ? "Approved" : "Approve"}
                         </Button>
                         <Button
                           variant="outline"
